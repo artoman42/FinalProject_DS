@@ -7,21 +7,26 @@
         "test_data_link":"https://static.cdn.epam.com/uploads/583f9e4a37492715074c531dbd5abad2/ds/final_project_test_dataset.zip",
         "raw_data_dir": "data/raw",
         "processed_data_dir":"data/processed",
-        "models_dir": "models",
-        "results_dir": "results"
+        "models_dir": "outputs/models",
+        "vectorizers_dir":"outputs/vectorizers",
+        "predictions_dir": "outputs/predictions",
+        "vectorizer_name":"tfidf_vectorizer.pkl"
     },
     "processing":{
         "raw_train_data":"final_project_train_dataset/train.csv",
         "raw_test_data":"final_project_test_dataset/test.csv",
-        "text_column_name":"review"
+        "text_column_name":"review",
+        "target_name":"sentiment"
     },
     "train": {
         "table_name": "train.csv",
-        "data_sample": 50,
-        "test_size": 0.3
-    },
+        "C": 1,
+        "max_iter": 1000, 
+        "penalty": "l2", 
+        "solver": "liblinear"
+        },
     "inference": {
         "inp_table_name": "test.csv",
-        "model_name": "prod_model.pickle" 
+        "model_name": "prod_model.pickle"
     }
 }

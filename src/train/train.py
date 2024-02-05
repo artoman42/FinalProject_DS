@@ -1,7 +1,7 @@
 """
 This script vectorizes data, trains model, and save it to pickle file.
 """
-import sklearn
+
 import os
 import sys
 import json
@@ -17,12 +17,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC_DIR = os.path.join(ROOT_DIR, 'src')
 sys.path.append(SRC_DIR)
-# print(f"SRC - {SRC_DIR}")
+
 from utils import get_project_dir, configure_logging
 
 # Loads configuration settings from JSON
 CONF_FILE = "settings.json"
-with open(CONF_FILE, "r") as file:
+with open(os.path.join(SRC_DIR, CONF_FILE), "r") as file:
     conf = json.load(file)
 
 TRAIN_DATA_PATH = os.path.join(get_project_dir(conf['general']['processed_data_dir']), conf['train']['table_name'])

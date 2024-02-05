@@ -20,28 +20,28 @@ from nltk.stem import WordNetLemmatizer
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC_DIR = os.path.join(ROOT_DIR, 'src')
 sys.path.append(SRC_DIR)
-print(f"ROOT - {ROOT_DIR}")
 # Change to CONF_FILE = "settings.json" if you have problems with env variables
 CONF_FILE = "settings.json"
-with open(CONF_FILE, "r") as file:
+with open(os.path.join(SRC_DIR, CONF_FILE), "r") as file:
     conf = json.load(file)
 from utils import singleton, get_project_dir, configure_logging
 
 PROCESSED_DATA_DIR = os.path.abspath(os.path.join(ROOT_DIR, './data/processed'))
-print(f"PROCESSED_DATA_DIR - {PROCESSED_DATA_DIR}")
 if not os.path.exists(PROCESSED_DATA_DIR):
     os.makedirs(PROCESSED_DATA_DIR)
 RAW_DATA_DIR = os.path.abspath(os.path.join(ROOT_DIR, '../data/raw'))
 
-
-# RAW_TRAIN_PATH = os.path.join(RAW_DATA_DIR, conf['processing']['raw_train_data'])
-# RAW_TEST_PATH = os.path.join(RAW_DATA_DIR, conf['processing']['raw_test_data'])
 
 RAW_TRAIN_PATH = os.path.join(ROOT_DIR, conf['general']['raw_data_dir'], conf['processing']['raw_train_data'])
 RAW_TEST_PATH = os.path.join(ROOT_DIR, conf['general']['raw_data_dir'], conf['processing']['raw_test_data'])
 
 PROCESSED_TRAIN_PATH = os.path.join(PROCESSED_DATA_DIR, conf['train']['table_name'])
 PROCESSED_TEST_PATH = os.path.join(PROCESSED_DATA_DIR, conf['inference']['inp_table_name'])
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--mode",
+                    help="Specify data to load training/inference",
+                    )
 
 class DataProcessor():
     def __init__(self) -> None:
@@ -370,14 +370,13 @@ class DataProcessor():
 def main():
     configure_logging()
     data_proc = DataProcessor()
-    # print(RAW_TRAIN_PATH)
-    # print(RAW_TEST_PATH)
-    # if not os.path.exists(PROCESSED_DATA_DIR):
-    #     os.makedirs(PROCESSED_DATA_DIR)
-    print(PROCESSED_DATA_DIR)
-    print(PROCESSED_TRAIN_PATH, PROCESSED_TEST_PATH)
-    data_proc.run_pipeline(RAW_TRAIN_PATH, PROCESSED_TRAIN_PATH, conf['processing']['text_column_name'])
-    data_proc.run_pipeline(RAW_TEST_PATH, PROCESSED_TEST_PATH, conf['processing']['text_column_name'])
+    args = parser.parse_args()
+    if args.mode == "training":
+        data_proc.run_pipeline(RAW_TRAIN_PATH, PROCESSED_TRAIN_PATH, conf['processing']['text_column_name'])
+    elif args.mode == "inference":
+        data_proc.run_pipeline(RAW_TEST_PATH, PROCESSED_TEST_PATH, conf['processing']['text_column_name'])
+    else:
+        logging.info("Bad mode exception, check args to command")
 
 if __name__ == "__main__":
     main()

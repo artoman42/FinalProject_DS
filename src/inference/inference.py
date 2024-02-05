@@ -20,7 +20,7 @@ from utils import get_project_dir, configure_logging
 
 # Loads configuration settings from JSON
 CONF_FILE = "settings.json"
-with open(CONF_FILE, "r") as file:
+with open(os.path.join(SRC_DIR, CONF_FILE), "r") as file:
     conf = json.load(file)
 
 TEST_DATA_PATH = os.path.join(get_project_dir(conf['general']['processed_data_dir']), conf['inference']['inp_table_name'])

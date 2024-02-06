@@ -1,5 +1,5 @@
 """
-Script loads the latest trained model, data for inference and predicts results.
+Script loads the latest trained model, vectorizer, and data for inference and predicts results.
 """
 
 import os 
@@ -9,13 +9,13 @@ import joblib
 import json
 import logging
 import time
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score
 from datetime import datetime
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC_DIR = os.path.join(ROOT_DIR, 'src')
 sys.path.append(SRC_DIR)
-# print(f"SRC - {SRC_DIR}")
+
 from utils import get_project_dir, configure_logging
 
 # Loads configuration settings from JSON
@@ -36,11 +36,15 @@ class Inference():
         self.vectorizer = None
         self.model = None
     def get_vectorizer(self):
+        """Function to load vectorizer from file"""
         logging.info("Loading vectorizer")
         self.vectorizer = joblib.load(os.path.join(VECTORIZERS_DIR_PATH, conf['general']['vectorizer_name'])) 
+
     def vectorize_data(self, data):
+        """Function to vectorize data"""
         logging.info("Vectorizing infer data")
         return self.vectorizer.transform(data)
+    
     def get_latest_model_path(self) -> str:
         """Gets the path of the latest saved model"""
         latest = None
@@ -69,15 +73,21 @@ class Inference():
             logging.error(f"An error occurred while loading inference data: {e}")
             sys.exit(1)
     def predict_results(self, model, infer_data):
+        """Function to predict results"""
         logging.info("Predicting results")
         return model.predict(infer_data)
+    
     def get_accuracy(self, predictions, labels):
+        """Function to get accuracy"""
         return accuracy_score(labels, predictions)
+    
     def store_results(self, infer_df, predictions):
+        """Function to store results in files"""
         infer_df["predicted_{}".format(conf['processing']['target_name'])] = predictions
         infer_df.to_csv(os.path.join(PREDICTIONS_DIR_PATH, 'predictions.csv'))
         with open(os.path.join(PREDICTIONS_DIR_PATH, 'metric.txt'), "w") as file:
             file.write(f"Accuracy - {self.get_accuracy(predictions, infer_df[conf['processing']['target_name']])}")
+
     def run_inference(self):
         logging.info("Running inference")
         start_time = time.time()

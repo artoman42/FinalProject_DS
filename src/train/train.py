@@ -10,10 +10,12 @@ import datetime
 import logging
 import time
 import joblib
+from sklearn.metrics import accuracy_score
 from datetime import datetime
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+# Defing root and src dirs
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC_DIR = os.path.join(ROOT_DIR, 'src')
 sys.path.append(SRC_DIR)
@@ -25,6 +27,7 @@ CONF_FILE = "settings.json"
 with open(os.path.join(SRC_DIR, CONF_FILE), "r") as file:
     conf = json.load(file)
 
+#defining pathes
 TRAIN_DATA_PATH = os.path.join(get_project_dir(conf['general']['processed_data_dir']), conf['train']['table_name'])
 MODELS_DIR_PATH = get_project_dir(conf['general']['models_dir'])
 VECTORIZERS_DIR_PATH = get_project_dir(conf['general']['vectorizers_dir'])
@@ -33,7 +36,7 @@ if not os.path.exists(MODELS_DIR_PATH):
     os.makedirs(MODELS_DIR_PATH)
 if not os.path.exists(VECTORIZERS_DIR_PATH):
     os.makedirs(VECTORIZERS_DIR_PATH)
-
+#main class of trainig
 class Training():
     def __init__(self, data_path):
         self.df = pd.read_csv(data_path)
@@ -65,6 +68,13 @@ class Training():
         joblib.dump(self.model,
                      os.path.join(MODELS_DIR_PATH, 
                                   datetime.now().strftime(conf['general']['datetime_format']) + '.pkl'))
+        
+    def show_accuracy_on_sample(self,X, sample_size):
+        """custom function to show achieved accuracy 
+        on first{sample_size} raws of traing data"""
+        predictions = self.model.predict(X[:sample_size])
+        true_labels = self.df[conf['processing']['target_name']].values[:sample_size]
+        return accuracy_score(true_labels, predictions)
     
     def run_training(self):
         """function to run training process"""
@@ -76,6 +86,7 @@ class Training():
         self.save_model()
         end_time = time.time()
         logging.info(f"Training completed in {end_time-start_time}s")
+        logging.info(f"Accuracy on 1000 samples{self.show_accuracy_on_sample(X, 1000)}")
 
 def main():
     configure_logging()

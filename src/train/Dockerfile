@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.9
 
 ARG settings_name=settings.json
 ENV CONF_PATH=${settings_name}

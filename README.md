@@ -1,5 +1,5 @@
 # FinalProject_DS
-Final project of EPAM Data Science Project 
+Final project of EPAM Data Science Program
 
 ## EDA part 
 ###
@@ -139,7 +139,7 @@ Once a model and vectorizer has been trained, it can be used to make predictions
 
 - Build the inference Docker image:
 ```bash
-docker build -f ./inference/Dockerfile --build-arg model_name=<model_name>.pkl --build-arg vectorizer_name=<vectorizer_name>.pkl --build-arg settings_name=settings.json -t inference_image .
+docker build -f ./src/inference/Dockerfile --build-arg model_name=<model_name>.pkl --build-arg vectorizer_name=<vectorizer_name>.pkl --build-arg settings_name=settings.json -t inference_image .
 ```
 - Then you should run the container with this command:
 ```bash

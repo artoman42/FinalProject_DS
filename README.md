@@ -105,7 +105,6 @@ Keep in mind that Docker requires you to have virtualization enabled in your sys
 
 ## Data:
 Data is the cornerstone of any Machine Learning project. For uploading the data, use the script located at `src/data_process/data_generation.py`. It has also 3 flags `--mode training` for only training data download, `--mode inference` for only testing data download. In same way works `src/data_process/data_processor.py` it uses downloaded data, process it and store it to `data/processed/`.
-
 ## Training:
 Here training pipeline is done in docker, so it is easier to train with it. If you wanna run it locally, you need to run a few scripts sequentlly(detailed about it after docker)
 
@@ -131,7 +130,7 @@ docker cp <container_id>:/app/outputs/vectorizers/<vectorizer_name>.pkl ./output
 Replace `<container_id>` with your running Docker container ID and `<model_name>.pkl` with your model's name and `<vectorizer_name>.pkl` with your vectorizer`s.
 2. Alternatively you can run all locally with
 ```bash
-python ./src/data_process/data_loader.py --mode training && python ./src/data_process/data_processor.py --mode training && python ./src/train/train.py
+python ./src/data_process/data_loader.py --mode training ; python ./src/data_process/data_processor.py --mode training ; python ./src/train/train.py
 
 ```
 ## Inference 
@@ -152,5 +151,5 @@ docker cp <container_id>:/app/outputs/predictions/ ./outputs/
 ```
 2. Alternatively you can run all locally with
 ```bash
-python ./src/data_process/data_loader.py --mode inference && python ./src/data_process/data_processor.py --mode inference && python ./src/inference/inference.py
+python ./src/data_process/data_loader.py --mode inference ; python ./src/data_process/data_processor.py --mode inference ; python ./src/inference/inference.py
 ```

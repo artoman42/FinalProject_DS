@@ -53,6 +53,7 @@ class Training():
     def save_vectorizer(self):
         """function to save vectorizer in pickle file"""
         logging.info("Saving Vectorizer")
+        logging.info(f"Vectorizer name - {conf['general']['vectorizer_name']}")
         joblib.dump(self.vectorizer,
                     os.path.join(VECTORIZERS_DIR_PATH,
                                    conf['general']['vectorizer_name']))
@@ -64,10 +65,12 @@ class Training():
     
     def save_model(self):
         """function to save model"""
-        logging.info("Saving model")
+        logging.info("Saving model...")
+        model_name = datetime.now().strftime(conf['general']['datetime_format']) + '.pkl'
+        logging.info(f"Model name - {model_name}")
         joblib.dump(self.model,
                      os.path.join(MODELS_DIR_PATH, 
-                                  datetime.now().strftime(conf['general']['datetime_format']) + '.pkl'))
+                                  model_name))
         
     def show_accuracy_on_sample(self,X, sample_size):
         """custom function to show achieved accuracy 
@@ -86,7 +89,7 @@ class Training():
         self.save_model()
         end_time = time.time()
         logging.info(f"Training completed in {end_time-start_time}s")
-        logging.info(f"Accuracy on 1000 samples{self.show_accuracy_on_sample(X, 1000)}")
+        logging.info(f"Accuracy on 1000 samples - {self.show_accuracy_on_sample(X, 1000)}")
 
 def main():
     configure_logging()

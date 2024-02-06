@@ -42,7 +42,7 @@ Final project of EPAM Data Science Project
 - For final model, i chose LogisticRegression, because it achieved the best accuracy result, and had one of the lowest training time.
 ### Overall perfomance evaluation
 - Training preprocessing take in average 250s, Test - 60s
-- Model training tooks 3-4s, and give ~90% accuracy on test data
+- Model training tooks 3-4s, and give ~90%(89.54) accuracy on test data
 - Testing also takes just a few seconds
 ### Potential business applications and value for business
 1. **Movie Studios and Production Companies**:
@@ -113,7 +113,7 @@ Here training pipeline is done in docker, so it is easier to train with it. If y
 
 - Build the training Docker image. If the built is successfully done, it will automatically train the model:
 ```bash
-docker build -f ./training/Dockerfile --build-arg settings_name=settings.json -t training_image .
+docker build -f ./src/train/Dockerfile --build-arg settings_name=settings.json -t training_image .
 ```
 - Then you should run the container with the following parameters to ensure that the trained model is here:
 ```bash
@@ -129,7 +129,11 @@ docker cp <container_id>:/app/outputs/vectorizers/<vectorizer_name>.pkl ./output
 ```
 
 Replace `<container_id>` with your running Docker container ID and `<model_name>.pkl` with your model's name and `<vectorizer_name>.pkl` with your vectorizer`s.
+2. Alternatively you can run all locally with
+```bash
+python ./src/data_process/data_loader.py --mode training && python ./src/data_process/data_processor.py --mode training && python ./src/train/train.py
 
+```
 ## Inference 
 Once a model and vectorizer has been trained, it can be used to make predictions on new data in the inference stage. The inference stage is implemented in `inference/run.py`.
 1. To run the inference using Docker, use the following commands:
@@ -142,4 +146,11 @@ docker build -f ./inference/Dockerfile --build-arg model_name=<model_name>.pkl -
 ```bash
 docker run -dit inference_image  
 ```
-
+- Then for copy results you need to use this
+```bash
+docker cp <container_id>:/app/outputs/predictions/ ./outputs/
+```
+2. Alternatively you can run all locally with
+```bash
+python ./src/data_process/data_loader.py --mode inference && python ./src/data_process/data_processor.py --mode inference && python ./src/inference/inference.py
+```
